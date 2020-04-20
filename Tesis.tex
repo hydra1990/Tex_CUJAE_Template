@@ -1,0 +1,129 @@
+%% ----------------------------------------------------------------
+%% Tesis.tex -- Fichero Principal (el que se compila con Latex)
+%% ---------------------------------------------------------------- 
+
+%% Esta plantilla está basada en la Tesis de Grado escrita por Sunil Patel,
+% (quién la basó en la plantilla ecsthesis) bajo la Licencia Pública del Proyecto LaTeX
+% que puede encontrarse acá: http://latex-project.org/lppl/
+% con la esperanza de que sea más fácil de usar y escalar a sus necesidades
+% por Simon Ternsjö en 2013-10
+% Traducida al español para su uso por hispano-hablantes por Dairelys García Rivas en 2017-07
+
+% INSTRUCCIONES:
+
+% La idea es no editar mucho este documento, sino llenar la información
+% en los diferentes ficheros en las carpetas;
+% Configuraciones, Páginas_Princ, Capítulos, Anexos y posiblemente Figuras,
+% así como el fichero Bibliografía.bib
+
+% Esta plantilla es fácil de escalar a sus necesidades, 
+% simplemente comente las declaraciones input que se explican debajo
+
+% Configurar el documento:
+\documentclass[letterpaper, 12pt, oneside]{Tesis}  % Usar el estilo Tesis", basado en el estilo ECS Thesis por Steve Gunn
+\sffamily
+
+% Adicionar más paquetes en Paquetes.tex:
+\input{Configuraciones/Paquetes.tex}
+
+% Usar si quiere:
+%5%\graphicspath{Figuras/}  % Ruta del fichero de gráficos (configurado para que los gráficos estén en formato PDF)
+%5%\hypersetup{urlcolor=blue, colorlinks=true}  % Colorea los hipervínculos en azul, pero puede distraer si hay muchos vínculos.
+\hypersetup{urlcolor=black, colorlinks=true}
+
+% Establecer su nombre, el título del trabajo y más en Administrativo.tex:
+\input{Configuraciones/Administrativo.tex}
+
+%% Para hacer el índice del Glosario de Términos
+%\usepackage{makeidx}
+%\makeindex
+
+%% ----------------------------------------------------------------
+\begin{document}
+\frontmatter      % Comenzar estilo romano (i, ii, iii, iv...) para el numerado de páginas
+
+%Márgenes
+\input{Configuraciones/Margenes.tex}
+
+% Aquí se importan las primeras páginas, puede encontrarlas en la carpeta Páginas_Princ
+% Los ficheros en la subcarpeta Fijo no necesitan edición.
+% Si no necesita ninguna de estas secciones, simplemente comente, o elimine la fila input
+
+%% Todas las páginas antes de los capítulos ------------------------------
+\input{Paginas_Princ/Fijo/Titulo}
+
+\input{Paginas_Princ/Pensamiento}
+
+\input{Paginas_Princ/Agradecimientos.tex}
+
+\input{Paginas_Princ/Dedicatoria.tex}
+
+\input{Paginas_Princ/Resumen}
+
+\input{Paginas_Princ/Abstract}
+
+\input{Paginas_Princ/Fijo/TablaDeContenidos.tex}
+
+\input{Paginas_Princ/Fijo/ListaDeFiguras.tex}
+
+\input{Paginas_Princ/Fijo/ListaDeTablas.tex}
+
+%% El Cuerpo -------------------------------------------------------
+\setstretch{1.3}  % Devolver el espaciado de línea a 1.3
+\mainmatter	  % Comenzar el numerado de página normal (1,2,3...)
+\pagestyle{fancy}  % Devolver los encabezados de página al estilo "fancy"
+
+\renewcommand{\chaptername}{Capítulo}
+% Incluír los capítulos de la tesis, como ficheros separados
+% Simplemente quite el símbolo de comentario a las líneas a medida
+% que vaya escribiendo los capítulos
+
+\input{Capitulos/Introduccion} % Introducción
+
+\input{Capitulos/Capitulo1} % 
+
+% \input{Capitulos/Capitulo2} % 
+
+% \input{Capitulos/Capitulo3} % 
+
+% \input{Capitulos/Capitulo4} % 
+
+% \input{Capitulos/Capitulo5} % 
+
+%% Conclusiones ---------------------------------------------------
+\input{Paginas_Princ/Conclusiones.tex}
+
+%% Recomendaciones ---------------------------------------------------
+\input{Paginas_Princ/Recomendaciones.tex}
+
+%% Referencias bibliográficas ---------------------------------------------------
+\backmatter % Pista para decirle a LaTeX que los siguientes 'capítulos' son Referencias bibliográficas
+\label{Referencias}
+\lhead{\emph{Referencias Bibliográficas}}  % Cambiar encabezado izquierdo a "Referencias bibliográficas"
+\addtotoc{Referencias Bibliográficas}
+\renewcommand\bibname{Referencias Bibliográficas}
+% Se pueden usar como estilos: plain, apalike, alpha, abbrv, unsrt
+\bibliographystyle{apalike}  % Usar el estilo de BibTeX para el formato de la Bibliografía
+% plain, apalike, alpha, abbrv, unsrt.
+
+\begingroup
+    \raggedright
+    \sloppy
+    \bibliography{Referencias}  % La información de las referencias bibliográficas se almacenan en el fichero llamado "Referencias.bib"
+\endgroup 
+
+\clearpage
+
+%% -----------------------------------------------------
+
+\input{Paginas_Princ/Glosario.tex}
+
+%% Anexos -----------------------------------------------------
+\addtocontents{toc}{\vspace{2em}} % Añadir un espacio en los Contenidos, por estética
+\lhead{\emph{Anexos}}  % Cambiar el encabezado izquierdo a "Anexos"
+\appendix % Pista para decirle a LaTeX que los siguientes 'capítulos' son Anexos
+
+\input{Anexos/AnexoA} % Título del Anexo
+
+\end{document}  % Fin
+%% ----------------------------------------------------------------

@@ -1,0 +1,138 @@
+% Para todos los capítulos, use la funcionalidad nueva chap{} en vez de chapter{}
+% Esto hará que el texto en la izquierda superior de la página sea el mismo que el del capítulo
+
+% Los Nombres de los capítulos se definen en Configuraciones/Administrativo.tex
+\chap{\CapDos} 
+
+\section{Introducción}
+\paragraph{}En este capítulo se hace referencia al estudio para realizar la descripción detallada sobre el modelo del negocio, del cual se obtendrá posteriormente la captura de requisitos y la modelación. Además, se definen los actores y trabajadores que intervienen en el negocio, así como las reglas y se exponen sus respectivas descripciones de acuerdo con los roles que desempeñan. Mediante el uso del lenguaje UML se representa el diagrama de casos de uso del negocio, los diagramas de actividades de los casos de uso definidos y el modelo de objetos que muestra las relaciones entre trabajadores y entidades. Se enumeran los requisitos funcionales y se muestra una breve descripción de los no funcionales que se satisfacen en la construcción de la solución propuesta. Se realiza una descripción de los actores y los casos de uso del sistema. Además, se identifican los paquetes a implementar y la relación existente entre ellos, con el objetivo de administrar la complejidad.
+
+\section{Modelo del negocio actual}
+\paragraph{}El negocio se centra en la oficina de la caja, local donde se registran sus operaciones. El local se encuentra ubicado físicamente en el segundo piso del edificio central del CIM. Este contiene la seguridad necesaria para la custodia del efectivo la cual se garantiza a través de cámaras y personal entrenado. El cajero tiene acceso a esta oficina, dentro se encuentran dos cajas fuertes para la custodia de todo el efectivo. La combinación de ambas cajas es de conocimiento únicamente del cajero, existiendo una copia lacrada en un sobre que se ubica en la direcci\'{o}n del CIM.
+\paragraph{}El negocio consta de dos tipos de acciones fundamentales, que generan operaciones de soporte y completamiento: la entrega y la recepción de efectivo. 
+\paragraph{}La recepción de efectivo en la caja consiste en el acto de recibir billetes y monedas por parte del cajero, por los siguientes motivos: venta de tickets en el comedor, recogida de pasaje de ómnibus, el cobro de efectivo del servicio de lavandería, la venta de medicamentos en el consultorio, el cobro por concepto de pérdida del solapín, entre otros. Estas operaciones son realizadas fundamentalmente por los jefes de las áreas de la UEB que atiende los servicios en el CIM y que se llama SERVICIM. Por cada entrega de efectivo, el cajero debe confeccionar un modelo denominado Recibo de Efectivo, después de verificar que los justificantes y el efectivo que traen los jefes de área coincidan. 
+\paragraph{}Por la suma de varios recibos de efectivo, el cajero realiza en el banco un depósito. La entrega del efectivo por parte del cajero ocurre cuando los trabajadores de las áreas del CIM: necesitan viajar a provincia por cuestiones de trabajo, o tienen que realizar pagos menores (ponches, confección de llaves, reparaciones menores, compra de sellos para realizar legalizaciones, entre otros) que no excedan la cantidad establecida en la caja. Esta actividad se centraliza por los jefes de las áreas y por cada operación el cajero emite un modelo de vale para pagos menores por los justificantes entregados. Para el caso de los viajes, se confecciona un modelo de Anticipos y Liquidación de Gastos de Viaje.
+\paragraph{}La caja tiene un fondo límite para operar y en ningún caso se puede utilizar el efectivo ingresado para realizar pagos. Es por esto que por la suma de los Vales para Pagos Menores y los modelos de dietas emitidas, el cajero debe reponer el efectivo entregado mediante la confección de un modelo de Reembolso del Fondo para Pagos Menores.
+\paragraph{}El efectivo en la caja es controlado a través de arqueos sorpresivos por parte del jefe del Departamento de Finanza (el cual realiza el del último día del mes para fijar los saldos en la contabilidad). El efectivo es contado y al saldo obtenido se le suman los vales de pagos menores y las dietas que no han podido ser reembolsadas. Se verifica que la suma de ambos importes no exceda del límite monetario aprobado para estar en poder del cajero.
+\paragraph{}Los modelos de anticipos de dietas se controlan por parte del especialista de contabilidad en un modelo denominado Control de los Anticipos a Justificar, por el cual se lleva la trazabilidad de las dietas, sus liquidaciones para su contabilización correspondiente.
+\paragraph{}La caja además realiza otras operaciones, como la recepción de cheques por parte del especialista de contabilidad, de pagos realizados por otras empresas, los cuales se depositan en la cuenta bancaria. Igualmente se reciben sellos contra el vale entregado para estos fines.
+\paragraph{}Todas estas operaciones deben ser anotadas por el cajero en el modelo Control Diario de Operaciones de Caja.
+
+\section{Reglas del negocio a considerar}
+\begin{itemize}
+	\item El efectivo por vale extraído de la caja no puede exceder los 500.00 CUP, ni los 500.00 CUC.
+	\item Todos los modelos deben ser firmados por personal autorizado para ello. El cual debe ser trabajador del CIM.
+	\item La suma captada de los montos autorizados no puede ser superior al fondo aprobado.
+	\item La operaciones de Anticipos para Gastos de Viaje no pueden exceder los montos autorizados por tipo de operaci\'{o}n.
+	\item El efectivo existente en la caja no puede exceder los 10,000.00 CUP, ni los 1,000.00 CUC (fondo autorizado para cada tipo de moneda).
+	\item Todos los modelos tienen que tener su desglose monetario en pesos y centavos por tipo de moneda.
+	\item Los documentos que amparen entrega y/o recepci\'{o}n de efectivo tienen una vigencia m\'{a}xima de 5 años.
+	\item Los documentos no pueden aparecer firmados en escaques diferentes por la misma persona y las firmas deben ser de personas autorizadas.
+	\item El anticipo para compra de sellos debe realizarse en un modelo de Vale para Pagos Menores Provisional, el que será cancelado una vez que el usuario 	autorizado entregue los sellos, para emitir un modelo definitivo con el 	desglose correspondiente.
+	\item Para realizar el arqueo de caja deben sumarse documentos y contarse los 	valores por denominación, la suma de ambos se compara con el fondo autorizado por tipo de moneda.
+	\item El combustible por tarjeta magnética tendrá el tratamiento según la norma contable, se emitirán cheques por el valor de la asignación de combustible y	la compra de tarjetas nuevas en la moneda que se designe. La carga se hace por listado de asignación de la empresa. El gasto se refleja a través de Vales	para Pagos Menores. Existe software en el Departamento de Transporte para	determinar vencimientos y otros parámetros.
+	\item Los modelos utilizados para amparar salidas y entradas de efectivo de la caja deben tener el formato establecido en la norma vigente \cite{noauthor_resolucion_2007}.
+	\item Los modelos deben tener numeración y esta es independiente por tipo de 	moneda: CUC y CUP, ambos deben cumplir los requisitos de la normativa vigente.
+	\item El efectivo que se reciba en la caja debe ser depositado en banco, los pagos menores se realizarán del fondo disponible.
+\end{itemize}
+
+\section{Actores del negocio}
+\begin{table}[ht]
+	\begin{supertabular}{ |p{6cm}|p{10cm}| }
+		\hline
+		\textbf{Nombre del actor}
+		& \textbf{Descripción} \\ \hline
+		
+		Jefe de Departamento Finanzas
+		& Es la persona encargada de realizar las supervisiones al efectivo mediante arqueos sorpresivos. Revisa las operaciones realizadas. \\ \hline
+		
+		Cliente
+		& Representa a los jefes de las áreas o personal autorizado que se presente en la caja para realizar una operación que involucre efectivo, sellos, cheques o monedas. \\
+		
+		\hline
+	\end{supertabular}
+	\caption[Actores del Negocio]{Actores del Negocio}
+	\label{table:act_neg}
+\end{table}
+
+\section{Diagrama de casos de uso del negocio}
+\paragraph{}El negocio contará con dos casos de uso, los cuales se grafican en el diagrama que se muestra a continuación en las Figuras \ref{fig:CUN_1} y \ref{fig:CUN_2}.
+
+\begin{figure}[H] %Con el paquete float, se pone la opción [H] para que te salga la imagen donde la quieres
+	\centering
+	\includegraphics[width=9cm,height=5cm]{Figuras/CUN_1.jpg}
+	\caption{Caso de uso del actor Jefe de Departamento de Finanzas}
+	\label{fig:CUN_1}
+\end{figure}
+
+\begin{figure}[H] %Con el paquete float, se pone la opción [H] para que te salga la imagen donde la quieres
+	\centering
+	\includegraphics[width=9cm,height=3cm]{Figuras/CUN_2.jpg}
+	\caption{Caso de uso del actor Cliente}
+	\label{fig:CUN_2}
+\end{figure}
+
+\section{Trabajadores del negocio}
+\begin{table}[ht]
+	\begin{supertabular}{ |l|p{12cm}| }
+		\hline
+		\textbf{Nombre del trabajador}
+		& \textbf{Descripción} \\ \hline
+		
+		Cajero
+		& Es la persona encargada de realizar todas las operaciones solicitadas por los clientes y el jefe de departamento. Tiene control sobre el efectivo. \\ \hline
+		
+		Especialista de contabilidad
+		& Es la persona encargada de recibir los registros de cierre diario de las operaciones de caja. \\
+		
+		\hline
+	\end{supertabular}
+	\caption[Trabajadores del Negocio]{Trabajadores del Negocio}
+	\label{table:trb_neg}
+\end{table}
+
+\section{Casos de uso del negocio}
+\paragraph{}La secuencia de acciones de un caso de uso del negocio se describe mediante un flujo de trabajo y se puede representar mediante una descripción literal del caso de uso o mediante el diagrama de actividades \cite{miranda_aplicaciones_2018}.
+\paragraph{}A continuación, se describen los casos de uso del negocio a través de los diagramas de actividades.
+
+\subsection{Caso de Uso 1: Solicitar cierre Control Diario de Operaciones de Caja.}
+\begin{figure}[H] %Con el paquete float, se pone la opción [H] para que te salga la imagen donde la quieres
+	\centering
+	\includegraphics[width=19cm,height=18cm]{Figuras/CU_1.jpg}
+	\caption{Diagrama de Actividades CUN Solicitar cierre diario de operaciones de caja.}
+	\label{fig:CU_1}
+\end{figure}
+
+\subsection{Caso de Uso 2: Realizar arqueo de caja}
+\begin{center}
+	\begin{figure}[H] %Con el paquete float, se pone la opción [H] para que te salga la imagen donde la quieres
+		\centering
+		\includegraphics[width=18cm,height=17cm]{Figuras/DACUNRArqueo.jpg}
+		\caption{\sf Diagrama de Actividades CUN Realizar arqueo de caja.}
+		\label{fig:DACUNRArqueo}
+	\end{figure}
+\end{center}
+
+
+\subsection{Caso de Uso 3: Solicitar operación}
+\begin{figure}[H] %Con el paquete float, se pone la opción [H] para que te salga la imagen donde la quieres
+	\centering
+	\includegraphics[width=17cm,height=20cm]{Figuras/DACUNSolOp.png}
+	\caption{\sf Diagrama de Actividades CUN Solicitar operación.}
+	\label{fig:DACUNSolOp}
+\end{figure}
+
+\section{Modelo de objetos}
+\begin{figure}[H] %Con el paquete float, se pone la opción [H] para que te salga la imagen donde la quieres
+	\centering
+	\includegraphics[width=14cm,height=10cm]{Figuras/Mod_Obj.jpg}
+	\caption{Diagrama de objetos del negocio.}
+	\label{fig:Mod_Obj}
+\end{figure}
+
+\section{Conclusiones parciales}
+\begin{itemize}
+	\item Se obtuvieron los	casos de uso del negocio que permiten definir las entidades.
+	\item Se definieron como trabajadores del negocio al cajero y al jefe de departamento de contabilidad, lo que permite establecerlos como actores del sistema.
+	\item El trabajador “Cajero” es el que interactúa con todas las entidades.
+\end{itemize}

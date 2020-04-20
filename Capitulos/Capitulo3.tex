@@ -1,0 +1,964 @@
+% Para todos los capítulos, use la funcionalidad nueva chap{} en vez de chapter{}
+% Esto hará que el texto en la izquierda superior de la página sea el mismo que el del capítulo
+
+% Los Nombres de los capítulos se definen en Configuraciones/Administrativo.tex
+\chap{\CapTres}
+\paragraph{}En el presente capítulo se explica de forma general el funcionamiento del sistema. Se enumeran los requisitos funcionales y se muestra una breve descripción de los no funcionales que se satisfacen en la construcción de la solución propuesta. Se realiza una descripción de los actores y los casos de uso del sistema. Además, se identifican los paquetes a implementar y la relación existente entre ellos, con el objetivo de administrar la complejidad.
+
+\section{Actores del sistema a informatizar}
+\paragraph{}En la tabla \ref{table:act_sist} se muestra la definición de los actores del sistema a informatizar.
+
+\begin{table}%[H]
+	\begin{supertabular}{|p{5cm}|p{12cm}|}
+		\hline
+		\textbf{Nombre del actor}
+		& \textbf{Descripción} \\ \hline
+		
+		Administrador
+		& Actor que tiene acceso a la creación de usuarios y verifica la traza del sistema así como la gestión de la salva y restaura de la base de datos en el servidor y la restaura en el sistema. \\ \hline
+		
+		Usuario
+		& Actor genérico que tiene acceso a opciones del sistema relacionadas con, autenticar usuario, cambiar contraseña y visualizar ayuda y algunos de los reportes del sistema. \\ \hline
+		
+		Cajero
+		& Actor encargado de crear los documentos en el sistema, Vales para Pagos Menores, Recibos de Efectivo, Anticipos y Liquidación de Gastos de Viaje, Depósito de Efectivo y Sellos, Movimiento Control Diario de Operaciones de Caja. \\ \hline
+		
+		Jefe de Departamento
+		& Actor encargado de la gestión de nomencladores, tiene acceso al Arqueo de Caja para realizar revisiones sorpresivas, así como fijar en la contabilidad los saldos de cierre de mes y revisa diversos documentos entre los que se encuentran: Reembolso del Fondo para Dietas y Pagos Menores y Depósitos de Efectivo y Cheques, tiene acceso a la salva del sistema, realiza la exportación de los comprobantes de operaciones. \\ \hline
+		
+		Especialista de Contabilidad
+		& Entrega los Cheques recibidos para su posterior depósito. Revisa para contabilizar los Depósitos de Efectivo y Cheques y los Reembolso del Fondo para Dietas y Pagos Menor, lleva el control de Anticipos a Justificar, la impresión de comprobantes de operaciones. \\
+		
+		\hline
+	\end{supertabular}
+	\caption[Actores del sistema a informatizar]{Actores del sistema a informatizar}
+	\label{table:act_sist}
+\end{table}
+
+\section{Definición de los requisitos funcionales}
+\paragraph{}Los requerimientos funcionales se definen como condiciones que deben cumplir un sistema para satisfacer un contrato, una norma, o sea, describen la funcionalidad o los servicios que se espera el sistema proveerán, sus entradas y sus salidas \cite{miranda_aplicaciones_2018}. A continuación, se exponen los requisitos funcionales de la aplicación empaquetados.
+\begin{enumerate}
+	\item Seguridad
+	\begin{enumerate}
+		\item Iniciar sesión de usuario
+		\item Definir permisos por rol
+		\item Asociar rol a usuario
+		\item Cambiar contraseña
+		\item Cambiar de usuario
+		\item Visualizar trazas de usuarios
+		\item Restaurar salva de la base de datos
+		\item Realizar salva de la base de datos
+	\end{enumerate}
+	\item Configuración
+	\begin{enumerate}
+		\item Obtener lista de empleados
+		\item Gestionar nomencladores
+		\begin{enumerate}
+			\item Provincias
+			\item Municipios
+			\item Cuentas contables\footnote{Se anotarán solamente, del nomenclador de cuentas contables emitido por la OSDE, aquellas que tienen que ver 	con la actividad}
+			\item Conceptos de documentos a procesar\footnote{Estos conceptos los define la entidad, de acuerdo a su nivel de actividad y sirven para 	homogenizar el tratamiento de los documentos emitidos}
+		\end{enumerate}
+		\item Modificar fondo autorizado para pagos menores
+		\item Modificar montos autorizados para gastos de viajes
+		\item Insertar saldos iniciales desde documento de arqueo de caja
+		\begin{enumerate}
+			\item Introducir desglose de efectivo por denominación y moneda
+		\end{enumerate}
+	\end{enumerate}
+	\item Operaciones
+	\begin{enumerate}
+		\item Efectuar pagos menores
+		\item Efectuar Recibo de Efectivo
+		\item Efectuar anticipo y liquidación de gastos de viaje
+		\begin{enumerate}
+			\item Calcular efectivo por día de viaje
+		\end{enumerate}
+		\item Efectuar reembolso del fondo para dietas y pagos menores
+		\item Efectuar arqueo de caja
+		\begin{enumerate}
+			\item Calcular efectivo existente por movimientos realizados
+		\end{enumerate}
+		\item Efectuar depósito de efectivo y cheques
+		\item Registrar cheque
+		\item Gestionar recibo de sellos del timbre
+		\item Obtener ficheros xml para exportar al sistema contable
+	\end{enumerate}
+	\item Reportes
+	\begin{enumerate}
+		\item Control de anticipos a justificar
+		\item Reembolso del Fondo para Pagos Menores
+		\item Movimiento Control Diario de Operaciones de Caja
+		\item Movimientos mensuales
+		\item Obtener ayuda sobre funcionalidades del sistema
+		\item Obtener comprobantes de operaciones exportados al sistema contable
+	\end{enumerate}
+\end{enumerate}
+
+\section{Paquetes y sus relaciones}
+\paragraph{}Como se aprecia en la Figura \ref{fig:Paquetes}, se han agrupado las funcionalidades de la aplicación en 4 paquetes para facilitar el desarrollo de la misma.
+
+\begin{figure}[H] %Con el paquete float, se pone la opción [H] para que te salga la imagen donde la quieres
+	\centering
+	\includegraphics[width=12cm,height=6cm]{Figuras/paquetes.jpg}
+	\caption{Diagrama de paquetes de la aplicación}
+	\label{fig:Paquetes}
+\end{figure}
+
+\paragraph{Paquete Seguridad:} En este paquete están los casos de uso asociados a la seguridad del sistema, contiene las funcionalidades relacionadas con los usuarios, contraseña, roles y visualización de las trazas del sistema.
+\paragraph{Paquete Configuración:} Se encuentran aquí los casos de uso relacionados con la gestión de nomencladores del sistema como son: Usuarios, Empleados, Provincias, Municipios, Cuentas Contables, así como los conceptos de las operaciones a realizar la configuración general: Fondo autorizado para pagos menores y gastos de viaje y la introducción de los saldos iniciales para comenzar a explotar la aplicación.
+\paragraph{Paquete Operaciones:} Se agrupan las funcionalidades principales del sistema, se encuentran los casos de uso: Arqueo de Caja, Reembolso del Fondo para Pagos Menores y Dietas, Vales para Pagos Menores, Control de Anticipos a Justificar, Recibo de Efectivo, Anticipo y Liquidación de Gastos de Viajes, Depósito de Efectivo y Cheques, Movimiento Control Diario de Operaciones de Caja y Entrega de Sellos, Emitir e imprimir comprobante de operaciones.
+\paragraph{Paquete Reportes:} Se agrupan aquí los casos de uso de los reportes que se muestran en el sistema, así como con la visualización de la ayuda.
+
+\section{Diagrama de Casos de Uso del sistema a informatizar}
+\paragraph{}“Cada forma en que los actores usan el sistema se representa con un caso de uso. Los casos de uso son “fragmentos” de funcionalidad que el sistema ofrece para aportar un resultado de valor para sus actores. De manera más precisa, un caso de uso especifica una secuencia de acciones que el sistema puede llevar a cabo al interactuar con sus actores, incluyendo alternativas dentro de la secuencia. Por tanto, un caso de uso es una especificación. Especifica el comportamiento de “cosas” dinámicas, en este caso, de instancias de los casos de uso” \cite{goran_v._rational_2007}.
+\paragraph{}En el Diagrama de Casos de Uso del Paquete Seguridad (ver Anexos, figura \ref{fig:DCU_Seg}). El rol administrador tendrá acceso a cinco de las opciones del sistema en este paquete, si está previamente autenticado para poder realizarlas.
+\paragraph{}En el Diagrama Casos de Uso del Paquete Configuración (ver Anexos, figura \ref{fig:DCU_Conf}) el rol Jefe de Departamento de Finanzas tiene a su cargo la realización de seis funcionalidades en este paquete. Para ello tiene que estar autenticado en el sistema. 
+\paragraph{}En el Diagrama de Casos de Uso del Paquete Operaciones (ver Anexo, figura \ref{fig:DCU_Oper}), en este paquete se muestran las interacciones de tres usuarios con un total de doce casos de usos repartidos entre ellos. Tres para Especialista en Contabilidad, dos para el Jefe de Departamento y siete para el Cajero. Para que un actor del sistema pueda acceder a sus funcionalidades, debe estar autenticado en la aplicación.
+\paragraph{}En el Diagrama de Casos de Uso del Paquete Reportes (ver Anexos, figura \ref{fig:DCU_Rep}). En este paquete el rol de Usuario cuenta con las funcionalidades de Visualizar Reportes y Visualizar Ayuda, Cambiar Contraseña y Cambiar de Usuario, para ello tiene que estar autenticado en el sistema.
+
+\section{Definición de los requisitos no funcionales}
+\paragraph{}Los requisitos no funcionales son propiedades o cualidades que el producto de \textit{software} debe poseer \cite{miranda_aplicaciones_2018}. A continuación, se describen los requisitos no funcionales a tener en cuenta en el desarrollo del sistema propuesto.
+
+\subsection{Apariencia o interfaz externa}
+\begin{enumerate}
+	\item El sistema tendrá una apariencia parecida a la del sistema contable en función de facilitar su uso, el sistema de ventanas está diseñado con igual propósito
+	\item Se requiere el uso de un lenguaje familiar para el usuario 
+	\item La interfaz principal debe contener la imagen del CIM, así como los colores que el Centro tiene definido en su manual de identidad corporativa
+	\item Los modelos impresos tendrán el logotipo del CIM en su esquina superior izquierda
+	\item Los modelos deben tener la estructura de la norma específica  del Ministerio de Finanzas y Precios\cite{noauthor_resolucion_2007}
+\end{enumerate}
+\subsection{Usabilidad}
+\begin{enumerate}
+	\item El sistema debe brindar facilidad en su uso con menús desplegables claros y espaciados adecuadamente, permitiendo una lectura fácil al usuario
+	\item Se emplea un diseño similar en todas las interfaces, por lo que en todos los formularios se debe utilizar igual tipo de letra y deben contener un título en su parte superior izquierda que indique el nombre de la funcionalidad del sistema
+	\item Los usuarios recibirán un adiestramiento que les permita entrenarse con la aplicación
+	\item El sistema contará con ayuda, lo que permitirá al usuario independencia después de un entrenamiento básico
+\end{enumerate}
+\subsection{Seguridad}
+\begin{enumerate}
+	\item Sólo el personal claramente identificado y autorizado tendrá acceso a sistemas en funcionamiento y a los datos \cite{jacobson_casos_2013}
+	\item Para la autenticación, la contraseña tendrá una longitud entre cuatro y seis caracteres y será cifrada, la misma tiene que ser una contraseña segura compuesta de letras y números
+	\item Se realizará chequeo de seguridad sobre las acciones realizadas mediante un registro de trazas en el servidor
+	\item El sistema brindará la posibilidad de salvar y restaurar la base de datos de la aplicación
+	\item El sistema exportará las operaciones en ficheros de tipo XML, compatibles con el sistema contable Siscont V disponible en CIM, en caso que la importación falle, pueden teclearse directamente
+	\item Los usuarios de las tecnologías de la información están en la obligación de informar de inmediato cualquier incidente de seguridad, debilidad o amenaza a sistemas o servicios y las direcciones correspondientes exigirán su cumplimiento \cite{jacobson_casos_2013}
+\end{enumerate}
+
+\subsection{Confiabilidad}
+\begin{enumerate}
+	\item La información manejada por el sistema estará protegida de acceso no autorizado mediante la autenticación de los usuarios con encriptación de contraseña, para evitar que ésta pueda ser descifrada por intrusos 
+	\item Cada usuario solamente podrá acceder a las funcionalidades permitidas según su rol
+	\item El Administrador del sistema será el usuario encargado de otorgar permisos, manejar roles, consultar la bitácora y restaurar la base de datos
+	\item La base de datos del sistema estará ubicada en un servidor corporativo
+	\item La base de datos tendrá un plan de salvas programadas automáticamente en el servidor, así como la posibilidad de salvar por parte de los usuarios del sistema
+	\item El Jefe de Departamento de Finanzas será la persona encargada de la salva	de las bases de datos del sistema y la misma estará ubicada en la carpeta	MSQLBACKUP del disco de la partición D del disco duro. El administrador	del sistema será el único usuario con posibilidades de restaurar la base de	datos
+\end{enumerate}
+\subsection{\textit{Software}}
+\begin{enumerate}
+	\item Las computadoras de los usuarios que empleen la aplicación deben tener instalado el sistema operativo \textit{Windows} XP como mínimo, o Linux
+	\item Igualmente en las estaciones deberá estar instalada la Máquina Virtual de Java 1.7.0
+	\item El servidor de base de datos debe tener instalado el sistema operativo \textit{Windows Server} 2000 o superior
+	\item Para que la aplicación funcione se utilizará un SGBD en un servidor	corporativo del CIM que se encuentra en el Departamento de Informática y	contiene la base de datos distribuida a la que se conecta el sistema
+	\item El servidor debe ser multiusuarios, multiplataforma, tener soporte para almacenar como mínimo las computadoras de los usuarios que empleen grandes bases de datos y consumir pocos recursos
+\end{enumerate}
+\subsection{\textit{Hardware}}
+\paragraph{}Como mínimo las computadoras de los usuarios que empleen la aplicación deben contar con 1.8 GHz de microprocesador, 512 Mb de RAM, 1 Gigabyte disponible en disco duro.
+\begin{enumerate}
+	\item La aplicación debe contar con 1.8 GHz de microprocesador, 512 Mb de RAM, 1 Gigabyte disponible en disco duro
+	\item Como mínimo se debe disponer de un servidor de base de datos que cuente con 3.0 GHz de microprocesador, 1 Gigabyte de RAM y 10 Gigabytes disponibles en disco duro
+	\item Al menos una impresora para imprimir los reportes
+\end{enumerate}
+
+\section{Descripción de los casos de uso}
+\paragraph{}Para realizar la descripción se toma como base el listado de los casos de uso del sistema, al clasificarse los mismos de acuerdo a su impacto en la operatoria del sistema en crítico a aquellos casos de uso que se identifican como imprescindibles, secundario para aquellos que tienen un impacto medio en la aplicación y auxiliar para aquellos que sirven de base a otros casos de uso o que su impacto en el sistema sea menor \cite{jacobson_casos_2013}.
+
+\begin{table}[H]
+	\sf
+	\begin{supertabular}{|p{4.5cm}|p{12cm}|}
+		\hline
+		\textbf{Nombre del caso de uso}
+		& \textbf{Gestionar usuarios y roles} \\ \hline
+		
+		Actor
+		& Administrador \\ \hline
+		
+		Resumen
+		& El caso de uso inicia cuando el Administrador del sistema desea realizar la gestión de usuarios y sus roles correspondientes \\ \hline
+		
+		Precondiciones
+		& El usuario debe estar creado en la base de datos del sistema el usuario debe estar en la tabla de empleado para poder acceder al sistema. \\ \hline
+		
+		Poscondiciones
+		& El sistema debe mostrar los usuarios gestionados, así como su información y el rol que le pertenece en el sistema. \\ \hline
+		
+		Referencia
+		& Paquete Seguridad. RF 1. \\ \hline
+
+		Prioridad
+		& Crítico \\		
+		\hline
+	\end{supertabular}
+	\caption[Descripción del caso de uso Gestionar usuarios y roles]{Descripción del caso de uso Gestionar usuarios y roles}
+	\label{table:GestUsers}
+\end{table}
+
+\begin{table}[H]
+	\sf
+	\begin{supertabular}{|p{4.5cm}|p{12cm}|}
+		\hline
+		\textbf{Nombre del caso de uso}
+		& \textbf{Cambiar contraseña} \\ \hline
+		
+		Actor
+		& Usuario \\ \hline
+		
+		Resumen
+		& El caso de uso se inicia cuando el actor especificado desea cambiar su contraseña en el sistema. El caso de uso finaliza al quedar actualizada la contraseña \\ \hline
+		
+		Precondiciones
+		& El usuario debe estar creado en la base de datos del sistema \\ \hline
+		
+		Poscondiciones
+		& La nueva contraseña debe quedar guardada en la base de datos
+		El usuario queda autenticado en el sistema \\ \hline
+		
+		Referencia
+		& Paquete Seguridad. RF 6. \\ \hline
+		
+		Prioridad
+		& Auxiliar \\		
+		\hline
+	\end{supertabular}
+	\caption[Descripción del caso de uso Cambiar contraseña]{Descripción del caso de uso Cambiar contraseña}
+	\label{table:CU_CambPass}
+\end{table}
+
+\begin{table}[H]
+	\sf
+	\begin{supertabular}{|p{4.5cm}|p{12cm}|}
+		\hline
+		\textbf{Nombre del caso de uso}
+		& \textbf{Cambiar usuario} \\ \hline
+		
+		Actor
+		& Usuario \\ \hline
+		
+		Resumen
+		& El caso de uso se inicia cuando el actor especificado desea cambiar de usuario porque otro ocupará la estación de trabajo. El caso de uso finaliza cuando el usuario actual sale del sistema y aparece la ventana de cambio de usuario \\ \hline
+		
+		Precondiciones
+		& El usuario debe estar creado en la base de datos del sistema \\ \hline
+		
+		Poscondiciones
+		& El usuario actual cuando finalice la sesión, el sistema debe salir de esta \\ \hline
+		
+		Referencia
+		& Paquete Seguridad. RF 7 \\ \hline
+		
+		Prioridad
+		& Auxiliar \\		
+		\hline
+	\end{supertabular}
+	\caption[Descripción del caso de uso Cambiar de usuario]{Descripción del caso de uso Cambiar de usuario}
+	\label{table:CU_CambUser}
+\end{table}
+
+\begin{table}[H]
+	\sf
+	\begin{supertabular}{|p{4.5cm}|p{12cm}|}
+		\hline
+		\textbf{Nombre del caso de uso}
+		& \textbf{Gestionar provincia} \\ \hline
+		
+		Actor
+		& Jefe de Departamento de Contabilidad \\ \hline
+		
+		Resumen
+		& El caso de uso se inicia cuando el actor especificado desea gestionar las provincias. El caso de uso permite insertar, modificar y eliminar provincias. El caso de uso termina con un listado de las provincias gestionadas \\ \hline
+		
+		Precondiciones
+		& El usuario debe estar creado en la base de datos y estar autenticado en el sistema \\ \hline
+		
+		Poscondiciones
+		& La información asociada a las provincias debe quedar actualizada en la base de datos \\ \hline
+		
+		Referencia
+		& Paquete Configuración. RF 2.2 \\ \hline
+		
+		Prioridad
+		& Secundario \\		
+		\hline
+	\end{supertabular}
+	\caption[Descripción del caso de uso Gestionar provincia]{Descripción del caso de uso Gestionar provincia}
+	\label{table:CU_GestProv}
+\end{table}
+
+\begin{table}[H]
+	\sf
+	\begin{supertabular}{|p{4.5cm}|p{12cm}|}
+		\hline
+		\textbf{Nombre del caso de uso}
+		& \textbf{Gestionar municipio} \\ \hline
+		
+		Actor
+		& Jefe de Departamento de Contabilidad \\ \hline
+		
+		Resumen
+		& El caso de uso se inicia cuando el actor especificado desea gestionar los municipios. El caso de uso permite insertar, modificar y eliminar municipios. El caso de uso termina con un listado de los municipios gestionados \\ \hline
+		
+		Precondiciones
+		& El usuario debe estar creado en la base de datos y estar autenticado en el sistema. Para crear un municipio deben estar creada la provincia a la que pertenece \\ \hline
+		
+		Poscondiciones
+		& La información asociada a las provincias debe quedar actualizada en la base de datos \\ \hline
+		
+		Referencia
+		& Paquete Configuración. RF 2.2 \\ \hline
+		
+		Prioridad
+		& Secundario \\		
+		\hline
+	\end{supertabular}
+	\caption[Descripción del caso de uso Gestionar municipio]{Descripción del caso de uso Gestionar municipio}
+	\label{table:CU_GestMuni}
+\end{table}
+
+\begin{table}[H]
+	\sf
+	\begin{supertabular}{|p{4.5cm}|p{12cm}|}
+		\hline
+		\textbf{Nombre del caso de uso}
+		& \textbf{Gestionar cuenta contable} \\ \hline
+		
+		Actor
+		& Jefe de Departamento de Contabilidad \\ \hline
+		
+		Resumen
+		& El caso de uso se inicia cuando el actor especificado desea gestionar las cuentas contables. El caso de uso permite insertar, modificar y eliminar cuentas contables. El caso de uso termina con un listado de las cuentas contables gestionadas \\ \hline
+		
+		Precondiciones
+		& El usuario debe estar creado en la base de datos y estar autenticado en el sistema \\ \hline
+		
+		Poscondiciones
+		& La información asociada a las cuentas contables debe quedar actualizada en la base de datos \\ \hline
+		
+		Referencia
+		& Paquete Configuración. RF 2.2 \\ \hline
+		
+		Prioridad
+		& Secundario \\		
+		\hline
+	\end{supertabular}
+	\caption[Descripción del caso de uso Gestionar cuenta contable]{Descripción del caso de uso Gestionar cuenta contable}
+	\label{table:CU_GestCCont}
+\end{table}
+
+\begin{table}[H]
+	\sf
+	\begin{supertabular}{|p{4.5cm}|p{12cm}|}
+		\hline
+		\textbf{Nombre del caso de uso}
+		& \textbf{Obtener lista de empleados} \\ \hline
+		
+		Actor
+		& Administrador \\ \hline
+		
+		Resumen
+		& El caso de uso se inicia cuando el actor especificado desea gestionar los empleados del sistema. Para lo cual deberá importarlos de la base de datos  \\ \hline
+		
+		Precondiciones
+		& El actor deberá tener acceso a la base de datos con la información requerida de los empleados \\ \hline
+		
+		Poscondiciones
+		& La información asociada a los empleados debe quedar almacenada en la base de datos \\ \hline
+		
+		Referencia
+		& Paquete Configuración. RF 2.1 \\ \hline
+		
+		Prioridad
+		& Secundario \\		
+		\hline
+	\end{supertabular}
+	\caption[Descripción del caso de uso Obtener lista de empleados]{Descripción del caso de uso Obtener lista de empleados}
+	\label{table:CU_GetEList}
+\end{table}
+
+\begin{table}[H]
+	\sf
+	\begin{supertabular}{|p{4.5cm}|p{12cm}|}
+		\hline
+		\textbf{Nombre del caso de uso}
+		& \textbf{Modificar fondo autorizado para pagos menores} \\ \hline
+		
+		Actor
+		& Jefe de Departamento \\ \hline
+		
+		Resumen
+		& El caso de uso se inicia cuando el actor especificado desea fijar el fondo máximo aprobado según documento firmado por el director de la Empresa. El caso de uso termina cuando el fondo ha sido fijado satisfactoriamente \\ \hline
+		
+		Precondiciones
+		& El usuario tiene que haberse autenticado en el sistema y contar con los privilegios necesarios y contar con la información necesaria para realizar esta acción \\ \hline
+		
+		Poscondiciones
+		& La información asociada al fondo autorizado para ejecutar pagos menores debe quedar almacenada en la base de datos \\ \hline
+		
+		Referencia
+		& Paquete Configuración. RF 2.3 \\ \hline
+		
+		Prioridad
+		& Crítico \\		
+		\hline
+	\end{supertabular}
+	\caption[Descripción del caso de uso Modificar fondo autorizado para pagos menores]{Descripción del caso de uso Modificar fondo autorizado para pagos menores}
+	\label{table:CU_ModFPM}
+\end{table}
+
+\begin{table}[H]
+	\sf
+	\begin{supertabular}{|p{4.5cm}|p{12cm}|}
+		\hline
+		\textbf{Nombre del caso de uso}
+		& \textbf{Insertar saldos iniciales desde documento arqueo de caja} \\ \hline
+		
+		Actor
+		& Jefe de Departamento \\ \hline
+		
+		Resumen
+		& El caso de uso se inicia cuando el actor especificado desea fijar los saldos iniciales con que trabajará el sistema sobre la base de un arqueo de caja efectuado. El caso de uso termina cuando los saldos han sido introducidos satisfactoriamente \\ \hline
+		
+		Precondiciones
+		& El usuario tiene que haberse autenticado en el sistema y contar con los privilegios necesarios \\ \hline
+		
+		Poscondiciones
+		& La información asociada a los saldos iniciales del sistema debe quedar almacenada en la base de datos \\ \hline
+		
+		Referencia
+		& Paquete Configuración. RF 2.5 \\ \hline
+		
+		Prioridad
+		& Crítico \\		
+		\hline
+	\end{supertabular}
+	\caption[Descripción del caso de uso Insertar saldos iniciales desde documento arqueo de caja]{Descripción del caso de uso Insertar saldos iniciales desde documento arqueo de caja}
+	\label{table:CU_InsSI}
+\end{table}
+
+\begin{table}[H]
+	\sf
+	\begin{supertabular}{|p{4.5cm}|p{12cm}|}
+		\hline
+		\textbf{Nombre del caso de uso}
+		& \textbf{Efectuar depósito de efectivo y cheques} \\ \hline
+		
+		Actor
+		& Cajero \\ \hline
+		
+		Resumen
+		& El caso de uso se inicia cuando el actor especificado desea realizar un depósito de efectivo y cheques al banco, una vez procesado los documentos procesados por estos conceptos (Recibo de Efectivo). El caso de uso termina cuando la información asociada a esta operación ha sido introducida satisfactoriamente \\ \hline
+		
+		Precondiciones
+		& El usuario tiene que haberse autenticado en el sistema y contar con los privilegios necesarios. El usuario tiene que desglosar el efectivo introducido \\ \hline
+		
+		Poscondiciones
+		& La información asociada al depósito de efectivo y cheques debe quedar almacenada en la base de datos. El reporte debe visualizarse en pantalla y ser exportable a PDF \\ \hline
+		
+		Referencia
+		& Paquete Operaciones. RF 3.6 \\ \hline
+		
+		Prioridad
+		& Crítico \\		
+		\hline
+	\end{supertabular}
+	\caption[Descripción del caso de uso Efectuar depósito de efectivo y cheques]{Descripción del caso de uso Efectuar depósito de efectivo y cheques}
+	\label{table:CU_EfectDepEf}
+\end{table}
+
+\begin{table}[H]
+	\sf
+	\begin{supertabular}{|p{4.5cm}|p{12cm}|}
+		\hline
+		\textbf{Nombre del caso de uso}
+		& \textbf{Efectuar reembolso del fondo para dietas y pagos menores} \\ \hline
+		
+		Actor
+		& Cajero \\ \hline
+		
+		Resumen
+		& El caso de uso se inicia cuando el actor especificado desea realizar un reembolso del fondo efectivo usado para dietas y pagos menores, una vez seleccionados los documentos previamente procesados por estos conceptos (Vale para Pagos Menores y Anticipos a Justificar). El caso de uso termina cuando la información asociada a esta operación ha sido introducida satisfactoriamente \\ \hline
+		
+		Precondiciones
+		& El usuario tiene que haberse autenticado en el sistema y contar con los privilegios necesarios. El sistema tiene que tener estos documentos sin haberse reembolsados para que la funcionalidad se ejecute \\ \hline
+		
+		Poscondiciones
+		& La información asociada al Reembolso del Fondo para dietas y Pagos Menores debe quedar almacenada en la base de datos. El modelo debe visualizarse en pantalla y ser exportable a PDF \\ \hline
+		
+		Referencia
+		& Paquete Operaciones. RF 3.4 \\ \hline
+		
+		Prioridad
+		& Crítico \\		
+		\hline
+	\end{supertabular}
+	\caption[Descripción del caso de uso Efectuar reembolso del fondo para dietas y pagos menores]{Descripción del caso de uso Efectuar reembolso del fondo para dietas y pagos menores}
+	\label{table:CU_EfectReemb}
+\end{table}
+
+\begin{table}[H]
+	\sf
+	\begin{supertabular}{|p{4.5cm}|p{12cm}|}
+		\hline
+		\textbf{Nombre del caso de uso}
+		& \textbf{Gestionar recibo de sellos del timbre} \\ \hline
+		
+		Actor
+		& Cajero \\ \hline
+		
+		Resumen
+		& El caso de uso se inicia cuando el actor especificado desea usar sellos para algún trámite. El cajero emite documento para la entrega de los sellos de acuerdo a la denominación y cantidad disponibles. El caso de uso termina cuando la información asociada a esta operación ha sido introducida satisfactoriamente \\ \hline
+		
+		Precondiciones
+		& El usuario tiene que haberse autenticado en el sistema y contar con los privilegios necesarios. Los sellos deben introducirse en el sistema por denominación e importe \\ \hline
+		
+		Poscondiciones
+		& La información asociada a la entrega de sellos debe quedar almacenada en la base de datos \\ \hline
+		
+		Referencia
+		& Paquete Operaciones. RF 3.8 \\ \hline
+		
+		Prioridad
+		& Secundario \\		
+		\hline
+	\end{supertabular}
+	\caption[Descripción del caso de uso Gestionar recibo de sellos del timbre]{Descripción del caso de uso Gestionar recibo de sellos del timbre}
+	\label{table:CU_GestSellos}
+\end{table}
+
+\begin{table}[H]
+	\sf
+	\begin{supertabular}{|p{4.5cm}|p{12cm}|}
+		\hline
+		\textbf{Nombre del caso de uso}
+		& \textbf{Efectuar arqueo de caja} \\ \hline
+		
+		Actor
+		& Jefe de Departamento \\ \hline
+		
+		Resumen
+		& El caso de uso se inicia cuando el actor especificado desea efectuar un Arqueo de Caja al efectivo y documentos existentes, de acuerdo con la información que posee el sistema. El caso de uso termina cuando ha sido introducida correctamente la cantidad contada y los documentos verificados y esta no excede del fondo autorizado \\ \hline
+		
+		Precondiciones
+		& El usuario tiene que haberse autenticado en el sistema y contar con los privilegios necesarios. Para realizar esta acción el sistema tiene que tener efectivo, cheques o sellos registrados y/o documentos de valor pendientes de ejecución. Introducir el efectivo físico. Realizar cálculo por denominación del efectivo existente \\ \hline
+		
+		Poscondiciones
+		& Se emite el modelo de Arqueo de Caja una vez fijado el arqueo en pantalla, el modelo debe ser exportado a PDF \\ \hline
+		
+		Referencia
+		& Paquete Operaciones. RF 3.5 \\ \hline
+		
+		Prioridad
+		& Crítico \\		
+		\hline
+	\end{supertabular}
+	\caption[Descripción del caso de uso Efectuar arqueo de caja]{Descripción del caso de uso Efectuar arqueo de caja}
+	\label{table:CU_EfArqCaja}
+\end{table}
+
+\begin{table}[H]
+	\sf
+	\begin{supertabular}{|p{4.5cm}|p{12cm}|}
+		\hline
+		\textbf{Nombre del caso de uso}
+		& \textbf{Modificar montos aprobados para gastos de viaje} \\ \hline
+		
+		Actor
+		& Jefe de Departamento \\ \hline
+		
+		Resumen
+		& El caso de uso se inicia cuando el actor especificado desea introducir los montos aprobados para gastos de viaje de acuerdo con la norma existente. El caso de uso termina cuando ha sido introducida correctamente los importes desglosados por tipo \\ \hline
+		
+		Precondiciones
+		& El usuario tiene que haberse autenticado en el sistema y contar con los privilegios necesarios. El usuario debe contar con la información necesaria actualizada para acometer esta acción \\ \hline
+		
+		Poscondiciones
+		& El sistema reflejará la información introducida la que quedará almacenada en la base de datos \\ \hline
+		
+		Referencia
+		& Paquete Seguridad. RF 2.4 \\ \hline
+		
+		Prioridad
+		& Secundario \\		
+		\hline
+	\end{supertabular}
+	\caption[Descripción del caso de uso Modificar montos aprobados para gastos de viaje]{Descripción del caso de uso Modificar montos aprobados para gastos de viaje}
+	\label{table:CU_ModMontos}
+\end{table}
+
+\begin{table}[H]
+	\sf
+	\begin{supertabular}{|p{4.5cm}|p{12cm}|}
+		\hline
+		\textbf{Nombre del caso de uso}
+		& \textbf{Efectuar anticipo y liquidación de gastos de viajes} \\ \hline
+		
+		Actor
+		& Cajero \\ \hline
+		
+		Resumen
+		& El caso de uso se inicia cuando el actor especificado desea anticipar gastos de viaje o cuando quiere liquidar un anticipo en el sistema. El caso de uso termina cuando ha sido introducida la información necesaria, desglosada por monedas \\ \hline
+		
+		Precondiciones
+		& El usuario tiene que haberse autenticado en el sistema y contar con los privilegios necesarios. El sistema calcula el efectivo a entregar por día de viaje \\ \hline
+		
+		Poscondiciones
+		& El reporte debe visualizarse en pantalla y ser exportable a PDF \\ \hline
+		
+		Referencia
+		& Paquete Operaciones. RF 3.3 \\ \hline
+		
+		Prioridad
+		& Crítico \\		
+		\hline
+	\end{supertabular}
+	\caption[Descripción del caso de uso Efectuar anticipo y liquidación de gastos de viajes]{Descripción del caso de uso Efectuar anticipo y liquidación de gastos de viajes}
+	\label{table:CU_EfectAntic}
+\end{table}
+
+\begin{table}[H]
+	\sf
+	\begin{supertabular}{|p{4.5cm}|p{12cm}|}
+		\hline
+		\textbf{Nombre del caso de uso}
+		& \textbf{Visualizar reportes} \\ \hline
+		
+		Actor
+		& Usuario \\ \hline
+		
+		Resumen
+		& El caso de uso se inicia cuando el actor especificado desea visualizar los reportes que emite el sistema, una vez que filtra el que desea. El caso de uso termina cuando ha sido mostrada la información solicitada \\ \hline
+		
+		Precondiciones
+		& El usuario tiene que haberse autenticado en el sistema y contar con los privilegios necesarios y haber filtrado el reporte que necesita \\ \hline
+		
+		Poscondiciones
+		& El reporte debe visualizarse en pantalla y ser exportable a PDF \\ \hline
+		
+		Referencia
+		& Paquete Reportes. RF 4 \\ \hline
+		
+		Prioridad
+		& Secundario \\		
+		\hline
+	\end{supertabular}
+	\caption[Descripción del caso de uso Visualizar reportes]{Descripción del caso de uso Visualizar reportes}
+	\label{table:CU_VisualRep}
+\end{table}
+
+\begin{table}[H]
+	\sf
+	\begin{supertabular}{|p{4.5cm}|p{12cm}|}
+		\hline
+		\textbf{Nombre del caso de uso}
+		& \textbf{Efectuar Vales para Pagos Menores} \\ \hline
+		
+		Actor
+		& Cajero \\ \hline
+		
+		Resumen
+		& El caso de uso se inicia cuando el usuario desea efectuar un pago menor del efectivo existente en el sistema. El caso de uso termina cuando ha sido mostrado el reporte correspondiente \\ \hline
+		
+		Precondiciones
+		& El usuario tiene que haberse autenticado en el sistema y contar con los privilegios necesarios. Debe desglosarse el efectivo pagado y no puede exceder el monto autorizado. Debe existir efectivo disponible para realizar el pago \\ \hline
+		
+		Poscondiciones
+		& Se emitirá un modelo de Vale para Pagos Menores el cual se visualizará en pantalla y será exportable a PDF \\ \hline
+		
+		Referencia
+		& Paquete Operaciones. RF 3.1 \\ \hline
+		
+		Prioridad
+		& Crítico \\		
+		\hline
+	\end{supertabular}
+	\caption[Descripción del caso de uso Efectuar Vales para Pagos Menores]{Descripción del caso de uso Efectuar Vales para Pagos Menores}
+	\label{table:CU_ValePM}
+\end{table}
+
+\begin{table}[H]
+	\sf
+	\begin{supertabular}{|p{4.5cm}|p{12cm}|}
+		\hline
+		\textbf{Nombre del caso de uso}
+		& \textbf{Efectuar Recibo de Efectivo} \\ \hline
+		
+		Actor
+		& Cajero \\ \hline
+		
+		Resumen
+		& El caso de uso se inicia cuando el actor especificado desea efectuar una entrega de efectivo del sistema del efectivo existente. El caso de uso termina cuando ha sido mostrado el reporte solicitado \\ \hline
+		
+		Precondiciones
+		& El usuario tiene que haberse autenticado en el sistema y contar con los privilegios necesarios. Debe desglosarse el efectivo recibido \\ \hline
+		
+		Poscondiciones
+		& Se emitirá un modelo de Recibo de Efectivo el cual se visualizará en pantalla y será exportable a PDF \\ \hline
+		
+		Referencia
+		& Paquete Operaciones. RF 3.2 \\ \hline
+		
+		Prioridad
+		& Crítico \\		
+		\hline
+	\end{supertabular}
+	\caption[Descripción del caso de uso Efectuar Recibo de Efectivo]{Descripción del caso de uso Efectuar Recibo de Efectivo}
+	\label{table:CU_EfectRecEfect}
+\end{table}
+
+\begin{table}[H]
+	\sf
+	\begin{supertabular}{|p{4.5cm}|p{12cm}|}
+		\hline
+		\textbf{Nombre del caso de uso}
+		& \textbf{Visualizar trazas de usuarios} \\ \hline
+		
+		Actor
+		& Administrador \\ \hline
+		
+		Resumen
+		& El caso de uso se inicia cuando el actor especificado selecciona la opción trazas de usuario del sistema. El caso de uso finaliza con la visualización de las trazas de los usuarios \\ \hline
+		
+		Precondiciones
+		& El usuario debe estar autenticado en el sistema y su rol debe ser administrador. Las trazas deben poder filtrarse por usuario y por fecha \\ \hline
+		
+		Poscondiciones
+		& Se emitirá una ventana con la información solicitada \\ \hline
+		
+		Referencia
+		& Paquete Seguridad. RF 1.8 \\ \hline
+		
+		Prioridad
+		& Secundario \\		
+		\hline
+	\end{supertabular}
+	\caption[Descripción del caso de uso Visualizar trazas de usuarios]{Descripción del caso de uso Visualizar trazas de usuarios}
+	\label{table:CU_VisTrazaUs}
+\end{table}
+
+\begin{table}[H]
+	\sf
+	\begin{supertabular}{|p{4.5cm}|p{12cm}|}
+		\hline
+		\textbf{Nombre del caso de uso}
+		& \textbf{Realizar salva de la base de datos} \\ \hline
+		
+		Actor
+		& Administrador \\ \hline
+		
+		Resumen
+		& El caso de uso se inicia cuando el actor especificado accede al sistema y selecciona la opción realizar la salva de la base de datos. El caso de uso finaliza con la visualización de un mensaje que notifica que la operación se realizó satisfactoriamente \\ \hline
+		
+		Precondiciones
+		& El usuario debe estar autenticado en el sistema y su rol debe ser administrador.
+		Debe estar definida la ruta de almacenamiento donde se va a guardar la salva la cual no puede estar en la partición del sistema operativo \\ \hline
+		
+		Poscondiciones
+		& Debe quedar almacenada la salva de la información de la base de datos en la ruta previamente definida \\ \hline
+		
+		Referencia
+		& Paquete Salvas. RF 5.2 \\ \hline
+		
+		Prioridad
+		& Crítico \\		
+		\hline
+	\end{supertabular}
+	\caption[Descripción del caso de uso Realizar salva de la base de datos]{Descripción del caso de uso Realizar salva de la base de datos}
+	\label{table:CU_SalvaBD}
+\end{table}
+
+\begin{table}[H]
+	\sf
+	\begin{supertabular}{|p{4.5cm}|p{12cm}|}
+		\hline
+		\textbf{Nombre del caso de uso}
+		& \textbf{Importar salva de la base de datos} \\ \hline
+		
+		Actor
+		& Administrador \\ \hline
+		
+		Resumen
+		& El caso de uso se inicia cuando el actor especificado desea restaurar una salva de la base de datos. El caso de uso finaliza con la visualización de un mensaje notificando que la operación se realizó de forma satisfactoria \\ \hline
+		
+		Precondiciones
+		& El usuario debe estar autenticado en el sistema y su rol debe ser administrador.
+		Debe existir al menos una salva de la base de datos en una ruta previamente definida, la cual debe ser seleccionada previamente \\ \hline
+		
+		Poscondiciones
+		& La base de datos debe quedar actualizada con la información de la salva seleccionada \\ \hline
+		
+		Referencia
+		& Paquete Salvas. RF 5.2 \\ \hline
+		
+		Prioridad
+		& Auxiliar \\		
+		\hline
+	\end{supertabular}
+	\caption[Descripción del caso de uso Importar salva de la base de datos]{Descripción del caso de uso Importar salva de la base de datos}
+	\label{table:CU_ImportBD}
+\end{table}
+
+\begin{table}[H]
+	\sf
+	\begin{supertabular}{|p{4.5cm}|p{12cm}|}
+		\hline
+		\textbf{Nombre del caso de uso}
+		& \textbf{Obtener ayuda sobre funcionalidades del sistema} \\ \hline
+		
+		Actor
+		& Usuario \\ \hline
+		
+		Resumen
+		& El caso de uso inicia cuando el actor especificado accede al sistema para visualizar la ayuda y lograr una mejor comprensión \\ \hline
+		
+		Precondiciones
+		& El usuario debe estar autenticado en el sistema y contar con los permisos necesarios para efectuar esta operación \\ \hline
+		
+		Poscondiciones
+		& La información mostrada debe coincidir con la seleccionada por el usuario \\ \hline
+		
+		Referencia
+		& Paquete Reportes. RF 4.5 \\ \hline
+		
+		Prioridad
+		& Auxiliar \\		
+		\hline
+	\end{supertabular}
+	\caption[Descripción del caso de uso Obtener ayuda sobre funcionalidades del sistema]{Descripción del caso de uso Obtener ayuda sobre funcionalidades del sistema}
+	\label{table:CU_ObtAyuda}
+\end{table}
+
+\begin{table}[H]
+	\sf
+	\begin{supertabular}{|p{4.5cm}|p{12cm}|}
+		\hline
+		\textbf{Nombre del caso de uso}
+		& \textbf{Conceptos de documentos a procesar} \\ \hline
+		
+		Actor
+		& Jefe de Departamento de Contabilidad \\ \hline
+		
+		Resumen
+		& El caso de uso se inicia cuando el actor especificado desea gestionar los departamentos, la acción permite insertar, modificar y eliminar conceptos. Termina con un listado de los conceptos gestionados \\ \hline
+		
+		Precondiciones
+		& El usuario debe estar autenticado en el sistema y contar con los permisos necesarios para efectuar esta operación \\ \hline
+		
+		Poscondiciones
+		& La información mostrada debe coincidir con la seleccionada por el usuario \\ \hline
+		
+		Referencia
+		& Paquete Configuración. RF 2.2 \\ \hline
+		
+		Prioridad
+		& Secundario \\		
+		\hline
+	\end{supertabular}
+	\caption[Descripción del caso de uso Conceptos de documentos a procesar]{Descripción del caso de uso Conceptos de documentos a procesar}
+	\label{table:CU_ConcDoc}
+\end{table}
+
+\begin{table}[H]
+	\sf
+	\begin{supertabular}{|p{4.5cm}|p{12cm}|}
+		\hline
+		\textbf{Nombre del caso de uso}
+		& \textbf{Control de anticipos a justificar} \\ \hline
+		
+		Actor
+		& Especialista de Contabilidad \\ \hline
+		
+		Resumen
+		& El caso de uso se inicia cuando el actor especificado desea confeccionar el estado de los anticipos a justificar. Termina con un reporte del Control de los Anticipos a Justificar \\ \hline
+		
+		Precondiciones
+		& El usuario debe estar autenticado en el sistema y contar con los permisos necesarios para efectuar esta operación, además, deben existir anticipos de gastos de viajes liquidados o no para su visualización \\ \hline
+		
+		Poscondiciones
+		& El reporte debe ser visualizado en pantalla y exportable a PDF \\ \hline
+		
+		Referencia
+		& Paquete Reportes. RF 4.1 \\ \hline
+		
+		Prioridad
+		& Auxiliar \\		
+		\hline
+	\end{supertabular}
+	\caption[Descripción del caso de uso Control de anticipos a justificar]{Descripción del caso de uso Control de anticipos a justificar}
+	\label{table:CU_ContAntic}
+\end{table}
+
+\begin{table}[H]
+	\sf
+	\begin{supertabular}{|p{4.5cm}|p{12cm}|}
+		\hline
+		\textbf{Nombre del caso de uso}
+		& \textbf{Registrar cheque} \\ \hline
+		
+		Actor
+		& Especialista de Contabilidad \\ \hline
+		
+		Resumen
+		& El caso de uso inicia cuando se recibe un cheque que paga alguna factura de producto o servicio emitido por la entidad \\ \hline
+		
+		Precondiciones
+		& El usuario debe estar autenticado en el sistema y contar con los permisos necesarios para efectuar esta operación, además, deben existir comprobantes de operaciones para exportar \\ \hline
+		
+		Poscondiciones
+		& Debe aparecer el aviso de que los comprobantes fueron exportados \\ \hline
+		
+		Referencia
+		& Paquete Operaciones. RF 3.7 \\ \hline
+		
+		Prioridad
+		& Crítico \\		
+		\hline
+	\end{supertabular}
+	\caption[Descripción del caso de uso Registrar cheque]{Descripción del caso de uso Registrar cheque}
+	\label{table:CU_RegistCheque}
+\end{table}
+
+\begin{table}[H]
+	\sf
+	\begin{supertabular}{|p{4.5cm}|p{12cm}|}
+		\hline
+		\textbf{Nombre del caso de uso}
+		& \textbf{Configurar parámetros de las salvas} \\ \hline
+		
+		Actor
+		& Administrador \\ \hline
+		
+		Resumen
+		& El caso de uso se inicia cuando el actor especificado desea configurar los parámetros de la salvan del sistema, para lo cual especifica el modo de ejecución y la ubicación donde se almacenarán las salvas, se tiene en cuenta que esta no puede estar en la partición del sistema operativo. El caso de uso finaliza con la visualización de la ventana principal de la aplicación \\ \hline
+		
+		Precondiciones
+		& El usuario debe estar autenticado en el sistema y su rol debe ser administrador \\ \hline
+		
+		Poscondiciones
+		& La ruta establecida no puede estar en el disco C de la PC donde se ejecutará la acción \\ \hline
+		
+		Referencia
+		& Paquete Salvas. RF 5.3 \\ \hline
+		
+		Prioridad
+		& Crítico \\		
+		\hline
+	\end{supertabular}
+	\caption[Descripción del caso de uso Configurar parámetros de las salvas]{Descripción del caso de uso Configurar parámetros de las salvas}
+	\label{table:CU_ConfigPSalva}
+\end{table}
+
+\section{Conclusiones parciales}
+\begin{itemize}
+	\item Se definieron como paquetes de la aplicación: seguridad, configuración,	operaciones y reportes
+	\item Se obtuvieron 5 trabajadores del negocio que abarcan las funcionalidades	del sistema: “Administrador”, “Usuario”, “Cajero”, “Jefe de Departamento	de Contabilidad” y “Especialista en Contabilidad”
+	\item Se clasificaron los casos de uso en “Crítico”, “Secundario” y “Auxiliar”,	para medir su impacto en el sistema
+\end{itemize}
